@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Catan fair dice</title>
+  <script type="text/javascript" src="browser_bias.js"></script>
+</head>
+<body>
+  <div>
+    <input type="text" id="iterations" placeholder="iterations" />
+    <input type="submit" value="generate dice" onclick="generateDice()" />
+  </div>
+
+  <div>
+    <div>Last roll: <span id="last"></span></div>
+    <div>All rolls: <span id="distribution"></span></div>
+    <div>Rolls left: <span id="iterationsLeft"></span></div>
+    <div><input type="submit" value="roll dice" onclick="rollDice()" /></div>
+  </div>
+
+  <script type="text/javascript">
+    var iterations,
+        Dice,
+        results,
+        distribution;
+
+    function generateDice () {
+      iterations = document.getElementById('iterations').value || 36;
+      Dice = Bias(iterations);
+      results = [];
+      distribution = {};
+    }
+
+    function rollDice () {
+      var roll = Dice.cast();
+      results.push(roll);
+      console.log(distribution[roll]);
+      distribution[roll] = distribution[roll] ? distribution[roll]+1 : 1;
+      document.getElementById('last').textContent = roll;
+      document.getElementById('distribution').textContent = JSON.stringify(distribution);
+      document.getElementById('iterationsLeft').textContent = (iterations - results.length);
+    }
+  </script>
+</body>
+</html>
