@@ -13,11 +13,12 @@
     #iterations {
       display: block;
       width: 80%;
-      margin: 5% auto;
-      line-height: 90px;
+      margin: 10% auto;
+    }
+
+    #generator h1 {
+      text-align: center;
       font-size: 36pt;
-      padding: 5%;
-      border-radius: 10px;
     }
 
     #generator button {
@@ -56,7 +57,8 @@
 </head>
 <body>
   <div id="generator">
-    <input type="text" id="iterations" placeholder="iterations" />
+    <h1>Generate dice for <span id="expectedRolls">50</span> rolls</h1>
+    <input type="range" id="iterations" min="50" max="1000" step="50" value="50" />
     <button onclick="generateDice()">Generate dice</button>
   </div>
 
@@ -78,7 +80,7 @@
         distribution;
 
     function generateDice () {
-      iterations = document.getElementById('iterations').value || 36;
+      iterations = Math.ceil(document.getElementById('iterations').value / 36) * 36;
       Dice = Bias(iterations);
       results = [];
       distribution = {};
@@ -119,6 +121,10 @@
 
       show(i, roll);
     }
+
+    document.getElementById('iterations').addEventListener('input', function (e) {
+      document.getElementById('expectedRolls').textContent = e.target.value;
+    });
   </script>
 </body>
 </html>
