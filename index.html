@@ -3,18 +3,72 @@
 <head>
   <title>Catan fair dice</title>
   <script type="text/javascript" src="browser_bias.js"></script>
+  <style type="text/css">
+    body {
+      background-color: #121212;
+      color: #EFEFEF;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    #iterations {
+      display: block;
+      width: 80%;
+      margin: 5% auto;
+      line-height: 90px;
+      font-size: 36pt;
+      padding: 5%;
+      border-radius: 10px;
+    }
+
+    #generator button {
+      display: block;
+      width: 90%;
+      margin: 5% auto;
+      height: 130px;
+      font-size: 36pt;
+      border-radius: 20px;
+      border: none;
+    }
+
+    #roller, #logs {
+      display: none;
+    }
+
+    #roll {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 360pt;
+      top: 30%;
+    }
+
+    #roller button {
+      width: 90%;
+      height: 130px;
+      font-size: 36pt;
+      border-radius: 20px;
+      border: none;
+      position: absolute;
+      left: 5%;
+      bottom: 5%;
+    }
+  </style>
 </head>
 <body>
-  <div>
+  <div id="generator">
     <input type="text" id="iterations" placeholder="iterations" />
-    <input type="submit" value="generate dice" onclick="generateDice()" />
+    <button onclick="generateDice()">Generate dice</button>
   </div>
 
-  <div>
+  <div id="roller">
+    <div id="roll">#</div>
+    <div><button onclick="rollDice()">Roll dice</button></div>
+  </div>
+
+  <div id="logs">
     <div>Last roll: <span id="last"></span></div>
     <div>All rolls: <span id="distribution"></span></div>
     <div>Rolls left: <span id="iterationsLeft"></span></div>
-    <div><input type="submit" value="roll dice" onclick="rollDice()" /></div>
   </div>
 
   <script type="text/javascript">
@@ -28,16 +82,42 @@
       Dice = Bias(iterations);
       results = [];
       distribution = {};
+      document.getElementById('generator').style.display = 'none';
+      document.getElementById('roller').style.display = 'block';
     }
 
     function rollDice () {
+      if (window.isRolling)
+        return;
+
+      window.isRolling = true;
       var roll = Dice.cast();
       results.push(roll);
-      console.log(distribution[roll]);
       distribution[roll] = distribution[roll] ? distribution[roll]+1 : 1;
+      playAnimationThenShow(roll);
       document.getElementById('last').textContent = roll;
       document.getElementById('distribution').textContent = JSON.stringify(distribution);
       document.getElementById('iterationsLeft').textContent = (iterations - results.length);
+    }
+
+    function playAnimationThenShow (roll) {
+      var div = document.getElementById('roll');
+      var i = 20;
+
+      function show (i, roll) {
+        if (i !== 0) {
+          div.textContent = Math.ceil(Math.random()*11) + 1;
+          i--;
+          window.setTimeout(function () {
+            show(i, roll);
+          }, 50);
+        } else {
+          window.isRolling = false;
+          div.textContent = roll;
+        }
+      }
+
+      show(i, roll);
     }
   </script>
 </body>
